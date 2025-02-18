@@ -12,7 +12,7 @@ call :Log "Inizio configurazione..."
 set "SERVER_FOLDER=%USERPROFILE%\Desktop\Server_Minecraft"
 set "START_SCRIPT=%SERVER_FOLDER%\start.bat"
 set "EULA_FILE=%SERVER_FOLDER%\eula.txt"
-set "PAPER_JAR=%SERVER_FOLDER%\paper.jar"
+set "PAPER_JAR=%~dp0paper.jar" :: Usa il file paper.jar nella directory corrente
 set "TEMURIN_INSTALLER=%TEMP%\temurin21.msi"
 
 :: Se il server è già configurato, avviarlo direttamente
@@ -66,28 +66,20 @@ if defined JAVA_FOUND (
     echo Temurin JDK 21 installato con successo.
 )
 
-:: Ottenere l'ultima build di PaperMC
-call :Log "Ottenendo l'ultima build di PaperMC..."
-echo Ottenendo l'ultima build di PaperMC...
-for /f %%i in ('powershell -Command "(Invoke-RestMethod -Uri 'https://api.papermc.io/v2/projects/paper/versions/1.21.4').builds[-1]"') do set "LATEST_BUILD=%%i"
-
-if not defined LATEST_BUILD (
-    call :Log "Errore: impossibile ottenere l'ultima build di PaperMC. Verifica la connessione a Internet."
-    echo Errore: impossibile ottenere l'ultima build di PaperMC. Verifica la connessione a Internet.
+:: Verifica la presenza del file paper.jar nella directory corrente
+if not exist "%PAPER_JAR%" (
+    call :Log "Errore: il file 'paper.jar' non è stato trovato nella directory corrente."
+    echo Errore: il file 'paper.jar' non è stato trovato nella directory corrente.
     pause
     exit
 )
 
-set "PAPER_DOWNLOAD=https://api.papermc.io/v2/projects/paper/versions/1.21/builds/%LATEST_BUILD%/downloads/paper-1.21.4-%LATEST_BUILD%.jar"
+:: Copia paper.jar nella cartella del server
+copy "%PAPER_JAR%" "%SERVER_FOLDER%\paper.jar" >nul
 
-:: Scaricamento di PaperMC
-call :Log "Scaricamento di PaperMC Build %LATEST_BUILD%..."
-echo Scaricamento di PaperMC Build %LATEST_BUILD%...
-curl -L -o "%PAPER_JAR%" "%PAPER_DOWNLOAD%"
-
-if not exist "%PAPER_JAR%" (
-    call :Log "Errore: impossibile scaricare PaperMC."
-    echo Errore: impossibile scaricare PaperMC.
+if not exist "%SERVER_FOLDER%\paper.jar" (
+    call :Log "Errore: impossibile copiare 'paper.jar' nella cartella del server."
+    echo Errore: impossibile copiare 'paper.jar' nella cartella del server.
     pause
     exit
 )
