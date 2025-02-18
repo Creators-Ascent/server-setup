@@ -69,7 +69,7 @@ if defined JAVA_FOUND (
 :: Ottenere l'ultima build di PaperMC
 call :Log "Ottenendo l'ultima build di PaperMC..."
 echo Ottenendo l'ultima build di PaperMC...
-for /f %%i in ('powershell -Command "(Invoke-RestMethod -Uri 'https://api.papermc.io/v2/projects/paper/versions/1.21').builds[-1]"') do set "LATEST_BUILD=%%i"
+for /f %%i in ('powershell -Command "(Invoke-RestMethod -Uri 'https://api.papermc.io/v2/projects/paper/versions/1.21.4').builds[-1]"') do set "LATEST_BUILD=%%i"
 
 if not defined LATEST_BUILD (
     call :Log "Errore: impossibile ottenere l'ultima build di PaperMC. Verifica la connessione a Internet."
@@ -78,7 +78,7 @@ if not defined LATEST_BUILD (
     exit
 )
 
-set "PAPER_DOWNLOAD=https://api.papermc.io/v2/projects/paper/versions/1.21/builds/%LATEST_BUILD%/downloads/paper-1.21-%LATEST_BUILD%.jar"
+set "PAPER_DOWNLOAD=https://api.papermc.io/v2/projects/paper/versions/1.21/builds/%LATEST_BUILD%/downloads/paper-1.21.4-%LATEST_BUILD%.jar"
 
 :: Scaricamento di PaperMC
 call :Log "Scaricamento di PaperMC Build %LATEST_BUILD%..."
